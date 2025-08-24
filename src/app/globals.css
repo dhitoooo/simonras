@@ -1,26 +1,143 @@
+/* === Tailwind v4 core === */
 @import "tailwindcss";
 
+/* === Vendor CSS (Leaflet) === */
+@import 'leaflet/dist/leaflet.css';
+
+/* === CSS Variables (light/dark) === */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
+
+    /* Default fallback untuk Next/font variables (akan dioverride oleh class dari layout) */
+    --font-geist-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    --font-geist-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+/* Tailwind v4 design tokens */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    /* Bind ke CSS variables kamu */
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    /* Fonts dari layout (Geist) */
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
+
+    /* Brand tokens: polri-blue */
+    --color-polri-blue-500: #2456d3; /* mid */
+    --color-polri-blue-600: #1e40af; /* brand */
+    --color-polri-blue-700: #163487; /* darker hover */
 }
 
+/* Dark mode variables */
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+    }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* === Base resets & globals === */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background: var(--background);
+        color: var(--foreground);
+        /* Pakai Geist variable; default fallback sudah didefinisikan di :root */
+        font-family: var(--font-geist-sans);
+        @apply antialiased;
+    }
+}
+
+/* === Leaflet small fixes === */
+.leaflet-div-icon { background: transparent; border: none; }
+.leaflet-marker-icon { background-color: transparent; }
+
+/* === Components === */
+@layer components {
+    /* Buttons */
+    .btn-primary {
+        @apply bg-polri-blue-600 hover:bg-polri-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    }
+    .btn-secondary {
+        @apply bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    }
+    .btn-danger {
+        @apply bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+    }
+
+    /* Cards */
+    .card { @apply bg-white rounded-lg shadow-md border border-gray-200; }
+    .card-header { @apply px-6 py-4 border-b border-gray-200 bg-gray-50 rounded-t-lg; }
+    .card-body { @apply px-6 py-4; }
+
+    /* Forms */
+    .form-input {
+        @apply block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-polri-blue-500 focus:border-polri-blue-500;
+    }
+    .form-select {
+        @apply block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-polri-blue-500 focus:border-polri-blue-500 bg-white;
+    }
+    .form-textarea {
+        @apply block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-polri-blue-500 focus:border-polri-blue-500 resize-y;
+    }
+
+    /* Badges */
+    .badge-success { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800; }
+    .badge-warning { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800; }
+    .badge-danger  { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800; }
+    .badge-info    { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800; }
+}
+
+/* === Utilities tambahan === */
+@layer utilities {
+    /* Hide scrollbar (WebKit) */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    /* Hide scrollbar (IE/Edge/Firefox) */
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Animations */
+    .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Print */
+    @media print { .no-print { display: none !important; } }
+}
+
+/* === Spinners === */
+.spinner { @apply inline-block w-4 h-4 border-2 border-solid border-gray-300 border-t-transparent rounded-full animate-spin; }
+.spinner-lg { @apply w-8 h-8 border-4; }
+
+/* === Mobile helpers === */
+@media (max-width: 640px) {
+    .mobile-padding { @apply px-4 py-2; }
+    .mobile-text    { @apply text-sm; }
+    .mobile-hidden  { @apply hidden; }
+    .mobile-full    { @apply w-full; }
+}
+
+@media all and (display-mode: standalone) {
+    body { @apply select-none; }
+    .pwa-hidden { @apply hidden; }
+}
+
+@media (prefers-contrast: more) {
+    .card { @apply border-2 border-black; }
+    .btn-primary { @apply border-2 border-black; }
+}
+
+/* === Reduced motion === */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
