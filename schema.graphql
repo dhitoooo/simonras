@@ -1,0 +1,72 @@
+scalar DateTime
+
+enum Fungsi {
+  Intel
+  Sabhara
+  Lantas
+  Humas
+  Ops
+  Admin
+}
+
+type User {
+  id: ID!
+  nrp: String!
+  nama: String!
+  jabatan: String!
+  fungsi: Fungsi!
+  polsek: String
+  phone: String
+  email: String
+  is_active: Boolean!
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+input CreateUserInput {
+  nrp: String!
+  nama: String!
+  jabatan: String!
+  fungsi: Fungsi!
+  polsek: String
+  phone: String
+  email: String
+  password: String!
+  is_active: Boolean
+}
+
+input UpdateUserInput {
+  nama: String
+  jabatan: String
+  fungsi: Fungsi
+  polsek: String
+  phone: String
+  email: String
+  password: String
+  is_active: Boolean
+}
+
+input UsersFilter {
+  q: String
+  fungsi: Fungsi
+  is_active: Boolean
+}
+
+type UsersPage {
+  data: [User!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}
+
+type Query {
+  users(page: Int = 1, pageSize: Int = 20, filter: UsersFilter): UsersPage!
+  user(id: ID!): User
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): User!
+  updateUser(id: ID!, input: UpdateUserInput!): User!
+  deleteUser(id: ID!): Boolean!
+  toggleUserActive(id: ID!, is_active: Boolean!): User!
+}
